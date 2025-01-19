@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  backend:
+    build: ./backside
+    ports:
+      - "5000:5000"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/my_social_media_app
+    depends_on:
+      - mongo
+    volumes:
+      - ./backside:/app # Correct volume mapping
+    restart: always # Restart on failure
+
+  frontend:
+    build: ./frontside
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontside:/app # Correct volume mapping
+    restart: always
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017" # Expose MongoDB port
+    volumes:
+      - mongo_data:/data/db # Named volume for data persistence
+
+volumes:
+  mongo_data: # Define the named volume
