@@ -5,29 +5,41 @@ services:
     ports:
       - "5000:5000"
     environment:
-      MONGO_URI: mongodb://mongo:27017/my_social_media_app
+      MONGO_URI: mongodb://mern_mongo_1:27017/my_social_media_app # Use service name "mongo"
     depends_on:
       - mongo
     volumes:
-      - ./backside:/app # Correct volume mapping
-    restart: always # Restart on failure
+      - ./backside:/app
+    restart: unless-stopped # Recommended restart policy
+    networks: # Add to the same network
+      - my-network
 
   frontend:
     build: ./frontside
     ports:
-      - "3000:80"
+      - "3000:80" # Host port:Container port
     depends_on:
       - backend
     volumes:
-      - ./frontside:/app # Correct volume mapping
-    restart: always
+      - ./frontside:/app
+    restart: unless-stopped # Recommended restart policy
+    networks: # Add to the same network
+      - my-network
+    environment:
+      REACT_APP_API_URL: http://mern_backend_1:5000 # Important for frontend to connect to backend
 
   mongo:
-    image: mongo
+    image: mongo:latest # Specify tag for consistent behavior
     ports:
-      - "27017:27017" # Expose MongoDB port
+      - "27017:27017" # Useful for debugging from host, optional in production
     volumes:
-      - mongo_data:/data/db # Named volume for data persistence
+      - mongo_data:/data/db
+    restart: unless-stopped # Recommended restart policy
+    networks: # Add to the same network
+      - my-network
 
 volumes:
-  mongo_data: # Define the named volume
+  mongo_data:
+
+networks: # Define the network
+  my-network:

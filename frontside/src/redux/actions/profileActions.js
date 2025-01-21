@@ -87,7 +87,7 @@ export const updateProfile = ({editData,avatar, auth}) =>async (dispatch) =>{
         dispatch({type:"ALERT", payload : {loading: true}})
         if(avatar) media = await imageupload([avatar])
 
-        const res = await axios.patch("http://localhost:5000/api/user", {
+        const res = await axios.patch("http://mern_backend_1:5000/api/user", {
             ...editData,
             avatar: avatar ? media[0].secure_url  : auth.user.avatar  
         },
